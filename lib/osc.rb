@@ -217,10 +217,7 @@ module OSC
     end
 
     def self.decode_string(io)
-      s = ''
-      until (c = io.getc) == 0
-	s << c
-      end
+      s = io.gets("\0").chomp("\0")
       io.skip_padding
       s
     end
