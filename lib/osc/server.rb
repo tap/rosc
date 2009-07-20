@@ -9,7 +9,7 @@ module OSC
     # types will be coerced, so e.g. 'fi' would match 'ii' and the float would
     # be coerced to an int.
     def add_method(pat, typespec, prock=nil, &block)
-      pat = Pattern.new(pat) unless Pattern === pat
+      pat = Pattern.new(pat) unless (Pattern === pat || pat.nil?)
       if block_given? and prock
 	raise ArgumentError, 'Specify either a block or a Proc, not both.'
       end
