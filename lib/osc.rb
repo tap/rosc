@@ -24,7 +24,7 @@ class StringIO
   def skip(n)
     self.seek(n, IO::SEEK_CUR)
   end
-  def skip_padding 
+  def skip_padding
     self.skip((4-pos)%4)
   end
 end
@@ -160,7 +160,7 @@ module OSC
 
   # bundle of messages and/or bundles
   class Bundle
-    attr_accessor :timetag 
+    attr_accessor :timetag
     attr_accessor :args
     attr_accessor :source
     alias :timestamp :timetag
@@ -170,7 +170,7 @@ module OSC
 
     # New bundle with time and messages
     def initialize(t=nil, *args)
-      @timetag = 
+      @timetag =
 	case t
 	when TimeTag
 	  t
@@ -194,11 +194,11 @@ module OSC
     def_delegators(:@args, *de)
 
     undef_method :zip
-    
+
     def encode
       Packet.encode(self)
     end
-    
+
   end
 
   # Unit of transmission.  Really needs revamping
@@ -308,8 +308,8 @@ module OSC
       when Bundle
 	s = encode('#bundle')
 	s << encode(o.timetag)
-	s << o.args.collect { |x| 
-	  x2 = encode(x); [x2.size].pack('N') + x2 
+	s << o.args.collect { |x|
+	  x2 = encode(x); [x2.size].pack('N') + x2
 	}.join
       end
     end
@@ -322,3 +322,4 @@ end
 require 'osc/pattern'
 require 'osc/server'
 require 'osc/udp'
+require 'osc/udp_server_with_count'
