@@ -322,6 +322,12 @@ module OSC
   end
 end
 
+
+libdir = Dir.getwd + "/rosc/lib"
+olddir = Dir.getwd
+Dir.chdir libdir        # change to libdir so that requires work
 require 'osc/pattern'
 require 'osc/server'
 require 'osc/udp'
+Dir.chdir olddir
+
