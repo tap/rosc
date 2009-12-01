@@ -44,18 +44,18 @@ module OSC
       t = t.first if t and t.size == 1
       case t
       when NIL # immediately
-	@int = 0
-	@frac = 1
+        @int = 0
+        @frac = 1
       when Numeric
-	@int, fr = t.divmod(1)
-	@frac = (fr * (2**32)).to_i
+        @int, fr = t.divmod(1)
+        @frac = (fr * (2**32)).to_i
       when Array
-	@int,@frac = t
+        @int,@frac = t
       when Time
-	@int, fr = (t.to_f+JAN_1970).divmod(1)
-	@frac = (fr * (2**32)).to_i
+        @int, fr = (t.to_f+JAN_1970).divmod(1)
+        @frac = (fr * (2**32)).to_i
       else
-	raise ArgumentError
+        raise ArgumentError
       end
     end
     attr_accessor :int, :frac
@@ -171,12 +171,12 @@ module OSC
     # New bundle with time and messages
     def initialize(t=nil, *args)
       @timetag =
-	case t
-	when TimeTag
-	  t
-	else
-	  TimeTag.new(t)
-	end
+        case t
+        when TimeTag
+          t
+        else
+          TimeTag.new(t)
+        end
       @args = args
     end
 
@@ -250,30 +250,30 @@ module OSC
         end
         b
       elsif id =~ /^\//
-	m = Message.new(id)
-	if io.getc == ?,
-	  tags = decode_string(io)
-	  tags.scan(/./) do |t|
-	    case t
-	    when 'i'
-	      m << decode_int32(io)
-	    when 'f'
-	      m << decode_float32(io)
-	    when 's'
-	      m << decode_string(io)
-	    when 'b'
-	      m << decode_blob(io)
+        m = Message.new(id)
+        if io.getc == ?,
+          tags = decode_string(io)
+          tags.scan(/./) do |t|
+            case t
+            when 'i'
+              m << decode_int32(io)
+            when 'f'
+              m << decode_float32(io)
+            when 's'
+              m << decode_string(io)
+            when 'b'
+              m << decode_blob(io)
 
-	    # right now we skip over nonstandard datatypes, but we'll want to
-	    # add these datatypes too.
-	    when /[htd]/; io.read(8)
-	    when 'S'; decode_string(io)
-	    when /[crm]/; io.read(4)
-	    when /[TFNI\[\]]/;
-	    end
-	  end
-	end
-	m
+              # right now we skip over nonstandard datatypes, but we'll want to
+              # add these datatypes too.
+            when /[htd]/; io.read(8)
+            when 'S'; decode_string(io)
+            when /[crm]/; io.read(4)
+            when /[TFNI\[\]]/;
+            end
+          end
+        end
+        m
       end
     end
 
@@ -301,21 +301,21 @@ module OSC
       when TimeTag; o.to_a.pack('NN')
 
       when Message
-	s = encode(o.address)
-	s << encode(','+o.types)
-	s << o.args.collect{|x| encode(x)}.join
+        s = encode(o.address)
+        s << encode(','+o.types)
+        s << o.args.collect{|x| encode(x)}.join
 
       when Bundle
-	s = encode('#bundle')
-	s << encode(o.timetag)
-	s << o.args.collect { |x|
-	  x2 = encode(x); [x2.size].pack('N') + x2
-	}.join
+        s = encode('#bundle')
+        s << encode(o.timetag)
+        s << o.args.collect { |x|
+          x2 = encode(x); [x2.size].pack('N') + x2
+        }.join
       end
     end
 
     private_class_method :decode_int32, :decode_float32, :decode_string,
-      :decode_blob, :decode_timetag
+    :decode_blob, :decode_timetag
   end
 end
 

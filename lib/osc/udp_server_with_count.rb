@@ -8,10 +8,16 @@ module OSC
     end
 
     def serve
-      loop do
+      #only loop when we're receiving non-nil values
+      continue = true
+      while continue do
         p, sender = recvfrom(MAX_MSG_SIZE)
-        dispatch p
-        @num_messages_received += 1
+        if p
+          dispatch p
+          @num_messages_received += 1
+        else
+          continue = false
+        end
       end
     end
   end
