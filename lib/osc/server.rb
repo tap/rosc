@@ -63,7 +63,6 @@ module OSC
                         mesg.args[i] = mesg.args[i].to_s
                       end
                     end
-
                     obj.call(mesg)
                   end
                 end
