@@ -67,7 +67,7 @@ class TC_OSC < Test::Unit::TestCase
 
     bundle = Packet.decode(e)
     assert_instance_of Bundle, bundle
-    
+
 
   end
 
@@ -93,30 +93,30 @@ class TC_OSC < Test::Unit::TestCase
     def test_request(p)
       send p
     end
-    
+
     def send_raw(msg, *args)
       dispatch msg
     end
-    
+
   end
 
   def test_server
     s = TestServer.new
-    s.add_method('/foo/bar',nil) { |msg| 
+    s.add_method('/foo/bar',nil) { |msg|
       assert_equal 'si',msg.typetag
       assert_equal 'Hello, World!',msg[0]
       assert_equal 42,msg[1]
-    }    
+    }
     s.test_request Message.new("/foo/bar",'si','Hello, World!',42)
   end
 
   def test_server_with_bundle
     s = TestServer.new
-    s.add_method('/foo/bar',nil) { |msg| 
+    s.add_method('/foo/bar',nil) { |msg|
       assert_equal 'si',msg.typetag
       assert_equal 'Hello, World!',msg[0]
       assert_equal 42,msg[1]
-    }    
+    }
     s.test_request Bundle.new(nil, Message.new("/foo/bar",'si','Hello, World!',42), Message.new("/foo/bar",'si','Hello, World!',42), Message.new("/foo/bar",'si','Hello, World!',42))
   end
 

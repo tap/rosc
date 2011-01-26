@@ -24,7 +24,7 @@ class StringIO
   def skip(n)
     self.seek(n, IO::SEEK_CUR)
   end
-  def skip_padding 
+  def skip_padding
     self.skip((4-pos)%4)
   end
 end
@@ -44,18 +44,18 @@ module OSC
       t = t.first if t and t.size == 1
       case t
       when NIL # immediately
-	@int = 0
-	@frac = 1
+        @int = 0
+        @frac = 1
       when Numeric
-	@int, fr = t.divmod(1)
-	@frac = (fr * (2**32)).to_i
+        @int, fr = t.divmod(1)
+        @frac = (fr * (2**32)).to_i
       when Array
-	@int,@frac = t
+        @int,@frac = t
       when Time
-	@int, fr = (t.to_f+JAN_1970).divmod(1)
-	@frac = (fr * (2**32)).to_i
+        @int, fr = (t.to_f+JAN_1970).divmod(1)
+        @frac = (fr * (2**32)).to_i
       else
-	raise ArgumentError
+        raise ArgumentError
       end
     end
     attr_accessor :int, :frac
@@ -160,7 +160,7 @@ module OSC
 
   # bundle of messages and/or bundles
   class Bundle
-    attr_accessor :timetag 
+    attr_accessor :timetag
     attr_accessor :args
     attr_accessor :source
     alias :timestamp :timetag
@@ -170,13 +170,13 @@ module OSC
 
     # New bundle with time and messages
     def initialize(t=nil, *args)
-      @timetag = 
-	case t
-	when TimeTag
-	  t
-	else
-	  TimeTag.new(t)
-	end
+      @timetag =
+        case t
+        when TimeTag
+          t
+        else
+          TimeTag.new(t)
+        end
       @args = args
     end
 
@@ -194,11 +194,11 @@ module OSC
     def_delegators(:@args, *de)
 
     undef_method :zip
-    
+
     def encode
       Packet.encode(self)
     end
-    
+
   end
 
   # Unit of transmission.  Really needs revamping
@@ -217,10 +217,7 @@ module OSC
     end
 
     def self.decode_string(io)
-      s = ''
-      until (c = io.getc) == 0
-	s << c
-      end
+      s = io.gets("\0").chomp("\0")
       io.skip_padding
       s
     end
@@ -253,30 +250,30 @@ module OSC
         end
         b
       elsif id =~ /^\//
-	m = Message.new(id)
-	if io.getc == ?,
-	  tags = decode_string(io)
-	  tags.scan(/./) do |t|
-	    case t
-	    when 'i'
-	      m << decode_int32(io)
-	    when 'f'
-	      m << decode_float32(io)
-	    when 's'
-	      m << decode_string(io)
-	    when 'b'
-	      m << decode_blob(io)
+        m = Message.new(id)
+        if io.getc == ?,
+          tags = decode_string(io)
+          tags.scan(/./) do |t|
+            case t
+            when 'i'
+              m << decode_int32(io)
+            when 'f'
+              m << decode_float32(io)
+            when 's'
+              m << decode_string(io)
+            when 'b'
+              m << decode_blob(io)
 
-	    # right now we skip over nonstandard datatypes, but we'll want to
-	    # add these datatypes too.
-	    when /[htd]/; io.read(8)
-	    when 'S'; decode_string(io)
-	    when /[crm]/; io.read(4)
-	    when /[TFNI\[\]]/;
-	    end
-	  end
-	end
-	m
+              # right now we skip over nonstandard datatypes, but we'll want to
+              # add these datatypes too.
+            when /[htd]/; io.read(8)
+            when 'S'; decode_string(io)
+            when /[crm]/; io.read(4)
+            when /[TFNI\[\]]/;
+            end
+          end
+        end
+        m
       end
     end
 
@@ -304,21 +301,21 @@ module OSC
       when TimeTag; o.to_a.pack('NN')
 
       when Message
-	s = encode(o.address)
-	s << encode(','+o.types)
-	s << o.args.collect{|x| encode(x)}.join
+        s = encode(o.address)
+        s << encode(','+o.types)
+        s << o.args.collect{|x| encode(x)}.join
 
       when Bundle
-	s = encode('#bundle')
-	s << encode(o.timetag)
-	s << o.args.collect { |x| 
-	  x2 = encode(x); [x2.size].pack('N') + x2 
-	}.join
+        s = encode('#bundle')
+        s << encode(o.timetag)
+        s << o.args.collect { |x|
+          x2 = encode(x); [x2.size].pack('N') + x2
+        }.join
       end
     end
 
     private_class_method :decode_int32, :decode_float32, :decode_string,
-      :decode_blob, :decode_timetag
+    :decode_blob, :decode_timetag
   end
 end
 
@@ -329,5 +326,6 @@ Dir.chdir libdir        # change to libdir so that requires work
 require 'osc/pattern'
 require 'osc/server'
 require 'osc/udp'
+require 'osc/udp_server_with_count'
 Dir.chdir olddir
 
